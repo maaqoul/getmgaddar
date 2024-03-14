@@ -1,32 +1,18 @@
-import { Injectable, inject } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { map } from 'rxjs';
 import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthGuard {
-  private readonly router: Router = inject(Router);
-  private authService = inject(AuthService);
-
-  public canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean | Observable<boolean> {
-    return this.authService.getAuthState().pipe(
-      map((state) => {
-        if (!state) {
-          this.router.navigate(['/auth/login']);
-          return false;
-        }
-        return true;
-      })
-    );
-  }
-}
+export const AuthGuard = () => {
+  const router: Router = inject(Router);
+  const authService = inject(AuthService);
+  return authService.getAuthState().pipe(
+    map((state) => {
+      if (!state) {
+        router.navigate(['/auth/login']);
+        return false;
+      }
+      return true;
+    })
+  );
+};
